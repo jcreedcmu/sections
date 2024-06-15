@@ -6,6 +6,7 @@ export type Action =
   | { t: 'save' }
   | { t: 'mouseDown', p_in_canvas: Point }
   | { t: 'setNavState', navState: NavState }
+  | { t: 'giveGuid', itemIx: number, guid: string }
   ;
 
 export type Dispatch = (action: Action) => void;

@@ -27,5 +27,14 @@ export function reduce(state: AppState, action: Action): AppState {
         s.navState = action.navState;
       });
     }
+    case 'giveGuid': {
+      const oldMeta = state.items[action.itemIx].meta;
+      const newMeta = produce(oldMeta ?? {}, m => {
+        m.id = action.guid;
+      });
+      return produce(state, s => {
+        s.items[action.itemIx].meta = newMeta;
+      });
+    }
   }
 }
