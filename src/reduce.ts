@@ -41,11 +41,21 @@ export function reduce(state: AppState, action: Action): AppState {
       const parts = oldItem.body.split(/\n?---\n\n?/);
       const newItems: ParsedItem[] = [
         { ...oldItem, body: parts[0] },
-        ...parts.slice(1).map(part => ({
-          ...oldItem,
-          body: part,
-          meta: { id: crypto.randomUUID() },
-        }))
+        ...parts.slice(1).map(part => {
+          let newTags = oldItem.tags;
+          if (action.variant.t == 'none') {
+            newTags = [];
+          }
+          if (action.variant.t == 'meta') {
+            newTags = ['storybits-meta'];
+          }
+          return ({
+            ...oldItem,
+            tags: newTags,
+            body: part,
+            meta: { id: crypto.randomUUID() },
+          })
+        })
       ];
       return produce(state, s => {
         s.data.items.splice(action.itemIx, 1, ...newItems);
