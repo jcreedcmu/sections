@@ -158,3 +158,20 @@ export function item_of_parsed_item(pitem: ParsedItem): Item {
   const raw_meta = meta == undefined ? undefined : unparseMeta(meta);
   return { attrs: new_attrs, body, date, file, meta: raw_meta };
 }
+
+export type Anomaly = {
+  ix: number
+}
+
+export function get_all_anomalies(items: ParsedItem[]): Anomaly[] {
+  let prevHasTag = false;
+  let prevDate = '0';
+  return items.flatMap((item, ix) => {
+    if (item.date == prevDate && prevHasTag && item.tags.length == 0) {
+      return [{ ix }];
+    }
+    prevHasTag = item.tags.length > 0;
+    prevDate = item.date;
+    return [];
+  });
+}

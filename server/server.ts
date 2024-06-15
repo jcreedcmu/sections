@@ -2,7 +2,7 @@ import express from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
 import { get_all_items, path_of_file, safe_to_overwrite, } from './notes-lib';
-import { ParsedItem, item_of_parsed_item, notes_of_struct, parsed_item_of_item } from './notes-lib-pure';
+import { ParsedItem, get_all_anomalies, item_of_parsed_item, notes_of_struct, parsed_item_of_item } from './notes-lib-pure';
 import { ServerData } from './server-types';
 
 
@@ -43,8 +43,10 @@ app.post('/save', (req, res) => {
 
 app.use('/json/data.json', (req, res) => {
   const items = get_all_items().map(parsed_item_of_item);
+  const anomalies = get_all_anomalies(items);
   const data: ServerData = {
-    items
+    items,
+    anomalies,
   };
   res.json(data);
 });
