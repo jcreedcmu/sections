@@ -4,7 +4,7 @@ import { renderTags } from './render-tag';
 import { Dispatch } from './action';
 
 export function queryTagPanel(state: AppState, tag: string, dispatch: Dispatch): JSX.Element {
-  const { items } = state;
+  const { data: { items } } = state;
   const renderItems = items.flatMap((item, ix) => {
     const { tags, attrs, body, date, file, meta } = item;
     const t = typeof (meta);

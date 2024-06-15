@@ -8,7 +8,7 @@ function idButton(itemIx: number, dispatch: Dispatch) {
 }
 
 export function storybitsPanel(state: AppState, dispatch: Dispatch): JSX.Element {
-  const { items } = state;
+  const { data: { items } } = state;
   const renderItems = items.flatMap((item, ix) => {
     const { tags, attrs, body, date, file, meta } = item;
     const t = typeof (meta);

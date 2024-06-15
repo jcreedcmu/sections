@@ -12,6 +12,7 @@ import { tagsPanel } from './tags-panel';
 import { queryTagPanel } from './query-tag-panel';
 import { Dispatch } from './action';
 import { ServerData } from '../server/server-types';
+import { anomaliesPanel } from './anomalies-panel';
 
 export type AppProps = {
   data: ServerData,
@@ -24,6 +25,7 @@ function getPanel(state: AppState, dispatch: Dispatch): JSX.Element {
     case 'storybits': return storybitsPanel(state, dispatch);
     case 'tags': return tagsPanel(state, dispatch);
     case 'query-tag': return queryTagPanel(state, ns.tag, dispatch);
+    case 'anomalies': return anomaliesPanel(state, dispatch);
   }
 }
 

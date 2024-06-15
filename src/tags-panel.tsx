@@ -4,7 +4,7 @@ import { renderTag } from './render-tag';
 import { Dispatch } from './action';
 
 export function tagsPanel(state: AppState, dispatch: Dispatch): JSX.Element {
-  const { items } = state;
+  const { data: { items } } = state;
   const tagCounts: Record<string, number> = {};
   items.forEach(item => {
     item.tags.forEach(tag => {

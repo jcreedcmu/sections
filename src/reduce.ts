@@ -12,7 +12,7 @@ export function reduce(state: AppState, action: Action): AppState {
     }
     case 'save': {
       return produce(state, s => {
-        s.effects.push({ t: 'save', items: state.items });
+        s.effects.push({ t: 'save', items: state.data.items });
       });
     }
     case 'mouseDown': {
@@ -28,12 +28,12 @@ export function reduce(state: AppState, action: Action): AppState {
       });
     }
     case 'giveGuid': {
-      const oldMeta = state.items[action.itemIx].meta;
+      const oldMeta = state.data.items[action.itemIx].meta;
       const newMeta = produce(oldMeta ?? {}, m => {
         m.id = action.guid;
       });
       return produce(state, s => {
-        s.items[action.itemIx].meta = newMeta;
+        s.data.items[action.itemIx].meta = newMeta;
       });
     }
   }
