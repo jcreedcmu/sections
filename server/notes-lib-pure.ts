@@ -158,18 +158,3 @@ export function item_of_parsed_item(pitem: ParsedItem): Item {
   const raw_meta = meta == undefined ? undefined : unparseMeta(meta);
   return { attrs: new_attrs, body, date, file, meta: raw_meta };
 }
-
-export type Anomaly = {
-  ix: number,
-}
-
-export function get_all_anomalies(items: ParsedItem[]): Anomaly[] {
-  return items.flatMap((item, ix) => {
-    if (item.body.match(new RegExp('^---$', 'm'))) {
-      return [{ ix }];
-    }
-    else {
-      return [];
-    }
-  });
-}

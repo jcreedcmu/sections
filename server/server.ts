@@ -43,10 +43,8 @@ app.post('/save', (req, res) => {
 
 app.use('/json/data.json', (req, res) => {
   const items = get_all_items().map(parsed_item_of_item);
-  const anomalies = get_all_anomalies(items);
   const data: ServerData = {
     items,
-    anomalies,
   };
   res.json(data);
 });
