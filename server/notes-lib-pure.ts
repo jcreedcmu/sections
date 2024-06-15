@@ -160,18 +160,23 @@ export function item_of_parsed_item(pitem: ParsedItem): Item {
 }
 
 export type Anomaly = {
-  ix: number
+  ix: number,
+  prevTags: string[],
 }
 
 export function get_all_anomalies(items: ParsedItem[]): Anomaly[] {
-  let prevHasTag = false;
+  let prevTags: string[] = [];
   let prevDate = '0';
+  let prevFile = '...';
   return items.flatMap((item, ix) => {
-    if (item.date == prevDate && prevHasTag && item.tags.length == 0) {
-      return [{ ix }];
+    if (item.date == prevDate && item.file == prevFile && prevTags.length > 0 && item.tags.length == 0) {
+      return [{ ix, prevTags }];
     }
-    prevHasTag = item.tags.length > 0;
+    if (!(item.date == prevDate || item.file == prevFile)) {
+      prevTags = item.tags;
+    }
     prevDate = item.date;
+    prevFile = item.file;
     return [];
   });
 }
