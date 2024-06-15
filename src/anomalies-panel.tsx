@@ -21,7 +21,7 @@ export function anomaliesPanel(state: AppState, dispatch: Dispatch): JSX.Element
     return [<tr key={ix}>
       <td>{date}<br /><span className="guid">{idShower}</span></td>
       <td>{file}</td>
-      <td>{renderTags(anom.prevTags, dispatch)}</td><td><pre>{body}</pre></td>
+      <td>{renderTags(tags, dispatch)}</td><td><pre>{body}</pre></td>
     </tr>];
   });
   return <table className="zebra"><tbody>{renderItems}</tbody></table>;
