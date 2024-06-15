@@ -40,8 +40,8 @@ app.post('/save', (req, res) => {
   });
 });
 
-// data.json is JSON-encoded ParsedItem[]
-app.use('/json/data.json', (req, res) => {
+// items.json is JSON-encoded ParsedItem[]
+app.use('/json/items.json', (req, res) => {
   const data = get_all_items().map(parsed_item_of_item);
   res.json(data);
 });

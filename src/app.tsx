@@ -49,7 +49,7 @@ export function App(props: AppProps): JSX.Element {
 }
 
 export async function init() {
-  const req = new Request('/json/data.json');
+  const req = new Request('/json/items.json');
   const items: ParsedItem[] = await (await fetch(req)).json();
   const props: AppProps = {
     items,
