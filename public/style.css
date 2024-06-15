@@ -1,0 +1,85 @@
+body {
+  margin: 0px;
+  height: 100%;
+  overflow: hidden;
+}
+
+table { border-collapse: collapse; }
+
+td { vertical-align: top; padding: 0.5em;}
+
+.guid { font-family: monospace; font-size: 0.8em; }
+
+.topnav {
+  background-color: #555;
+  font-family: sans-serif;
+  display: flex;
+}
+
+.nav-button {
+  cursor: pointer;
+  user-select: none;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.nav-spacer {
+  flex-grow: 1;
+}
+
+.topnav .nav-button:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.topnav .active {
+  background-color: #17d;
+  color: white;
+}
+
+.nav-green {
+  background-color: #3A6;
+}
+
+.app {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0; top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.topnav {
+  flex-grow: 0;
+}
+
+.panel {
+  flex-grow: 1;
+  overflow: scroll;
+  padding: 1em;
+}
+
+.zebra {
+  font-family: sans-serif;
+}
+
+.zebra tr:nth-child(odd) {
+  background-color: #e7e7f7;
+}
+
+.tag {
+  font-family: sans-serif;
+  border: 1px solid #090;
+  color: #040;
+  display: inline-block;
+  border-radius: 10px;
+  padding: 2px 5px;
+  background-color: #ce7;
+  cursor: pointer;
+  user-select: none;
+}
