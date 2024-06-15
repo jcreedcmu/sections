@@ -19,7 +19,7 @@ export type ParsedItem = {
   attrs: Attrs,
 }
 
-const delim = /((?:^=== .*$)|(?:^---$)|(?:^--- META: .*$))\n/m;
+const delim = /((?:^=== .*$)|(?:^--- META: .*$))\n/m;
 
 export function parseMeta(meta: string): Record<string, string> {
   const rv: Record<string, string> = {};
