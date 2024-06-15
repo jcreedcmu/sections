@@ -5,7 +5,7 @@ import { extractEffects } from './lib/extract-effects';
 import { useEffectfulReducer } from './lib/use-effectful-reducer';
 import { ParsedItem } from './notes-lib';
 import { reduce } from './reduce';
-import { AppState, mkState } from './state';
+import { AppState, mkState, navStateOfHash } from './state';
 import { Navbar } from './navbar';
 import { storybitsPanel } from './storybits-panel';
 import { tagsPanel } from './tags-panel';
@@ -14,7 +14,7 @@ import { Dispatch } from './action';
 
 export type AppProps = {
   items: ParsedItem[],
-  color: string,
+  hash: string,
 };
 
 function getPanel(state: AppState, dispatch: Dispatch): JSX.Element {
@@ -27,10 +27,18 @@ function getPanel(state: AppState, dispatch: Dispatch): JSX.Element {
 }
 
 export function App(props: AppProps): JSX.Element {
-  const [state, dispatch] = useEffectfulReducer(mkState(props.items), extractEffects(reduce), doEffect);
+  const [state, dispatch] = useEffectfulReducer(mkState(props), extractEffects(reduce), doEffect);
   const { counter } = state;
   const { items } = props;
-
+  function onHashChange() {
+    dispatch({ t: 'setNavState', navState: navStateOfHash(document.location.hash) });
+  }
+  React.useEffect(() => {
+    window.addEventListener('hashchange', onHashChange);
+    return () => {
+      window.removeEventListener('hashchange', onHashChange);
+    };
+  });
   return <>
     <Navbar dispatch={dispatch} navState={state.navState} />
     <div className="panel">
@@ -45,7 +53,7 @@ export async function init() {
   const items: ParsedItem[] = await (await fetch(req)).json();
   const props: AppProps = {
     items,
-    color: '#f0f',
+    hash: window.location.hash,
   };
   const root = createRoot(document.querySelector('.app')!);
   root.render(<App {...props} />);

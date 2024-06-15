@@ -4,6 +4,7 @@ import { AppState } from "./state";
 
 export type Effect =
   | { t: 'save', items: ParsedItem[] }
+  | { t: 'setHash', hash: string }
   ;
 
 export function doEffect(state: AppState, dispatch: Dispatch, effect: Effect): void {
@@ -33,6 +34,9 @@ ${await res.text()}`);
           console.log('fetch error', e);
         }
       })();
+    } break;
+    case 'setHash': {
+      window.location.hash = effect.hash;
     } break;
   }
 }

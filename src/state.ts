@@ -1,3 +1,4 @@
+import { AppProps } from "./app";
 import { Effect } from "./effect";
 import { ParsedItem } from "./notes-lib";
 
@@ -15,6 +16,26 @@ export type AppState = {
   navState: NavState,
 }
 
-export function mkState(items: ParsedItem[]): AppState {
-  return { counter: 0, effects: [], debugStr: '', items, navState: { t: 'storybits' } };
+export function navStateOfHash(hash: string): NavState {
+  if (hash.match(/^#tags$/))
+    return { t: 'tags' };
+  let m;
+  if (m = hash.match(/^#query-tag=(.*)$/)) {
+    return { t: 'query-tag', tag: m[1] };
+  }
+  return { t: 'storybits' };
+}
+
+export function hashOfNavState(navState: NavState): string {
+  switch (navState.t) {
+    case 'storybits': return '';
+    case 'tags': return '#tags';
+    case 'query-tag': return `#query-tag=${navState.tag}`;
+  }
+}
+
+export function mkState(props: AppProps): AppState {
+  const { items, hash } = props;
+  const navState = navStateOfHash(hash);
+  return { counter: 0, effects: [], debugStr: '', items, navState };
 }
