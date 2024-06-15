@@ -10,7 +10,7 @@ export function queryTagPanel(state: AppState, tag: string, dispatch: Dispatch):
     const t = typeof (meta);
     if (!tags.includes(tag)) return [];
     // XXX This use of ix as key is bad --- I should be using id once I ensure every item has id
-    return [<tr key={ix}><td>{date}<br />
+    return [<tr key={ix}><td>{file}<br />{date}<br />
       <span className="guid">{meta?.id ?? ''}</span></td>
       <td>{renderTags(tags, dispatch)}</td><td><pre>{body}</pre></td></tr>];
   });
