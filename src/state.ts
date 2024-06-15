@@ -35,7 +35,7 @@ export function hashOfNavState(navState: NavState): string {
 }
 
 export function mkState(props: AppProps): AppState {
-  const { items, hash } = props;
+  const { data: { items }, hash } = props;
   const navState = navStateOfHash(hash);
   return { counter: 0, effects: [], debugStr: '', items, navState };
 }

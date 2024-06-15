@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { get_all_items, path_of_file, safe_to_overwrite, } from './notes-lib';
 import { ParsedItem, item_of_parsed_item, notes_of_struct, parsed_item_of_item } from './notes-lib-pure';
+import { ServerData } from './server-types';
 
 
 const app = express();
@@ -40,9 +41,11 @@ app.post('/save', (req, res) => {
   });
 });
 
-// items.json is JSON-encoded ParsedItem[]
-app.use('/json/items.json', (req, res) => {
-  const data = get_all_items().map(parsed_item_of_item);
+app.use('/json/data.json', (req, res) => {
+  const items = get_all_items().map(parsed_item_of_item);
+  const data: ServerData = {
+    items
+  };
   res.json(data);
 });
 

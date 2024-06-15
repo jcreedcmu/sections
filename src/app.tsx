@@ -11,9 +11,10 @@ import { storybitsPanel } from './storybits-panel';
 import { tagsPanel } from './tags-panel';
 import { queryTagPanel } from './query-tag-panel';
 import { Dispatch } from './action';
+import { ServerData } from '../server/server-types';
 
 export type AppProps = {
-  items: ParsedItem[],
+  data: ServerData,
   hash: string,
 };
 
@@ -29,7 +30,7 @@ function getPanel(state: AppState, dispatch: Dispatch): JSX.Element {
 export function App(props: AppProps): JSX.Element {
   const [state, dispatch] = useEffectfulReducer(mkState(props), extractEffects(reduce), doEffect);
   const { counter } = state;
-  const { items } = props;
+  const { data: { items } } = props;
   function onHashChange() {
     dispatch({ t: 'setNavState', navState: navStateOfHash(document.location.hash) });
   }
@@ -49,10 +50,10 @@ export function App(props: AppProps): JSX.Element {
 }
 
 export async function init() {
-  const req = new Request('/json/items.json');
-  const items: ParsedItem[] = await (await fetch(req)).json();
+  const req = new Request('/json/data.json');
+  const data: ServerData = await (await fetch(req)).json();
   const props: AppProps = {
-    items,
+    data,
     hash: window.location.hash,
   };
   const root = createRoot(document.querySelector('.app')!);
