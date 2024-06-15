@@ -1,7 +1,7 @@
 import { produce } from 'immer';
 import { AppState, hashOfNavState } from './state';
 import { Action } from './action';
-import { Item } from './notes-lib';
+import { Item, ParsedItem } from './notes-lib';
 
 export function reduce(state: AppState, action: Action): AppState {
   switch (action.t) {
@@ -34,6 +34,21 @@ export function reduce(state: AppState, action: Action): AppState {
       });
       return produce(state, s => {
         s.data.items[action.itemIx].meta = newMeta;
+      });
+    }
+    case 'splitItem': {
+      const oldItem = state.data.items[action.itemIx];
+      const parts = oldItem.body.split(/\n?---\n\n?/);
+      const newItems: ParsedItem[] = [
+        { ...oldItem, body: parts[0] },
+        ...parts.slice(1).map(part => ({
+          ...oldItem,
+          body: part,
+          meta: { id: crypto.randomUUID() },
+        }))
+      ];
+      return produce(state, s => {
+        s.data.items.splice(action.itemIx, 1, ...newItems);
       });
     }
   }

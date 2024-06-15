@@ -184,3 +184,12 @@ export function findLastIndex<T>(xs: T[], f: (x: T) => boolean): number {
   }
   return -1;
 }
+
+export function arrayJoin<T>(xs: T[], delim: T): T[] {
+  const rv: T[] = [];
+  xs.forEach((x, ix) => {
+    if (ix > 0) rv.push(delim);
+    rv.push(x);
+  });
+  return rv;
+}
