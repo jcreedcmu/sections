@@ -1,10 +1,10 @@
-import canonicalize from 'canonicalize';
 import express from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
 import { dataDir, get_all_items, path_of_file, safe_to_overwrite, } from './notes-lib';
 import { ParsedItem, item_of_parsed_item, notes_of_struct, parsed_item_of_item } from './notes-lib-pure';
 import { ServerData, SidecarData } from './server-types';
+import { canonicalize } from './canonicalize';
 
 const app = express();
 const sidecarFile = path.join(dataDir, 'sidecar.json');
@@ -19,7 +19,7 @@ app.post('/save', (req, res) => {
   req.on('end', () => {
     const { items, sidecar }: ServerData = JSON.parse(data);
     const files = notes_of_struct(items.map(item_of_parsed_item));
-    const paths = Object.keys(files).map(path_of_file);
+    const paths = [...Object.keys(files), 'sidecar.json'].map(path_of_file);
     const unsafe_paths = paths.filter(path => !safe_to_overwrite(path));
 
     if (unsafe_paths.length > 0) {
@@ -45,6 +45,7 @@ app.post('/save', (req, res) => {
       res.end(`${msg}\n ... but couldn't canonicalize sidecar data`);
       return;
     }
+    msg += `Generating sidecar.json...\n`;
     fs.writeFileSync(sidecarFile, json, 'utf8');
     res.status(200);
     res.end(msg);
