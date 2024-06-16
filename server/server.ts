@@ -1,14 +1,15 @@
+import canonicalize from 'canonicalize';
 import express from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
-import { get_all_items, path_of_file, safe_to_overwrite, } from './notes-lib';
+import { dataDir, get_all_items, path_of_file, safe_to_overwrite, } from './notes-lib';
 import { ParsedItem, item_of_parsed_item, notes_of_struct, parsed_item_of_item } from './notes-lib-pure';
-import { ServerData } from './server-types';
-
+import { ServerData, SidecarData } from './server-types';
 
 const app = express();
+const sidecarFile = path.join(dataDir, 'sidecar.json');
 
-// Expects BODY to by JSON-encoded ParsedItem[]
+// Expects BODY to by JSON-encoded ServerData
 app.post('/save', (req, res) => {
   let data = '';
   req.setEncoding('utf8');
@@ -16,7 +17,7 @@ app.post('/save', (req, res) => {
     data += chunk;
   });
   req.on('end', () => {
-    const items: ParsedItem[] = JSON.parse(data);
+    const { items, sidecar }: ServerData = JSON.parse(data);
     const files = notes_of_struct(items.map(item_of_parsed_item));
     const paths = Object.keys(files).map(path_of_file);
     const unsafe_paths = paths.filter(path => !safe_to_overwrite(path));
@@ -36,6 +37,15 @@ app.post('/save', (req, res) => {
       msg += `Generating ${notesFile}...\n`;
       fs.writeFileSync(path, files[notesFile].join('').replace(/\n$/, ''), 'utf8');
     }
+
+    // write sidecar data
+    const json = canonicalize(sidecar);
+    if (json == undefined) {
+      res.status(500);
+      res.end(`${msg}\n ... but couldn't canonicalize sidecar data`);
+      return;
+    }
+    fs.writeFileSync(sidecarFile, json, 'utf8');
     res.status(200);
     res.end(msg);
   });
@@ -43,8 +53,10 @@ app.post('/save', (req, res) => {
 
 app.use('/json/data.json', (req, res) => {
   const items = get_all_items().map(parsed_item_of_item);
+  const sidecar: SidecarData = JSON.parse(fs.readFileSync(sidecarFile, 'utf8'));
   const data: ServerData = {
     items,
+    sidecar,
   };
   res.json(data);
 });

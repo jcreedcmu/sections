@@ -12,7 +12,7 @@ export function reduce(state: AppState, action: Action): AppState {
     }
     case 'save': {
       return produce(state, s => {
-        s.effects.push({ t: 'save', items: state.data.items });
+        s.effects.push({ t: 'save', data: state.data });
       });
     }
     case 'mouseDown': {

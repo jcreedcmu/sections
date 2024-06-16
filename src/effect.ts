@@ -1,9 +1,10 @@
 import { Item, ParsedItem } from './notes-lib';
 import { Dispatch } from "./action";
 import { AppState } from "./state";
+import { ServerData } from '../server/server-types';
 
 export type Effect =
-  | { t: 'save', items: ParsedItem[] }
+  | { t: 'save', data: ServerData }
   | { t: 'setHash', hash: string }
   ;
 
@@ -14,7 +15,7 @@ export function doEffect(state: AppState, dispatch: Dispatch, effect: Effect): v
         console.log('example side effect. writing to file on server side.');
         const req = new Request('/save', {
           method: 'POST',
-          body: JSON.stringify(effect.items),
+          body: JSON.stringify(effect.data),
           headers: {
             'Content-type': 'text/json',
           },

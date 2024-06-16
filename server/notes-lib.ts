@@ -3,12 +3,14 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Item, struct_of_notes } from './notes-lib-pure';
 
+export const dataDir = path.join(__dirname, '../../../self');
+
 export const ALL_NOTES_FILES: string[] = [
   'NOTES', 'IDEAS', 'IDEAS-2011-2016', 'CONWORLD', 'STORYMETA'
 ];
 
 export function path_of_file(notesFile: string): string {
-  return path.join(__dirname, '../../../self', notesFile);
+  return path.join(dataDir, notesFile);
 }
 
 export function safe_to_overwrite(filePath: string): boolean {
