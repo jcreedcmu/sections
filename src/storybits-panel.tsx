@@ -30,9 +30,12 @@ export function storybitsPanel(state: AppState, dispatch: Dispatch): JSX.Element
     const maybeTitle = attrs.title != undefined ? <h5>{attrs.title}</h5> : undefined;
     const { title: _, ...otherAttrs } = attrs;
     const maybeAttrs = Object.keys(otherAttrs).length > 0 ? 'otherAttrs=' + JSON.stringify(otherAttrs) : undefined;
-    return [<tr key={id}><td>{date}<br />
+    const rating = state.data.sidecar.rating[id] ?? 0;
+    const entryClassName = rating < 0 ? 'faded' : undefined;
+    const entry = <tr key={id} className={entryClassName}><td>{date}<br />
       <span className="guid">{id}</span></td>
-      <td>{renderLikes(id, state.data.sidecar.rating[id] ?? 0, dispatch)}</td><td>{maybeTitle}{maybeAttrs}<pre>{body}</pre></td></tr>];
+      <td>{renderLikes(id, rating, dispatch)}</td><td>{maybeTitle}{maybeAttrs}<pre>{body}</pre></td></tr>;
+    return [entry];
   });
   return <table className="zebra"><tbody>{renderItems}</tbody></table>;
 }

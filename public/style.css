@@ -94,3 +94,7 @@ h5 {  margin: 0px; }
   margin: 1px;
 cursor:  pointer;
 }
+
+.faded {
+  opacity: 40%;
+}
