@@ -61,5 +61,10 @@ export function reduce(state: AppState, action: Action): AppState {
         s.data.items.splice(action.itemIx, 1, ...newItems);
       });
     }
+    case 'setRating': {
+      return produce(state, s => {
+        s.data.sidecar.rating[action.id] = action.rating;
+      });
+    }
   }
 }

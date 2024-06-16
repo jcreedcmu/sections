@@ -13,7 +13,8 @@ export type Action =
   | { t: 'mouseDown', p_in_canvas: Point }
   | { t: 'setNavState', navState: NavState }
   | { t: 'giveGuid', itemIx: number, guid: string }
-  | { t: 'splitItem', itemIx: number, variant: SplitVariant }
+  | { t: 'splitItem', itemIx: number, variant: SplitVariant } // XXX deprecated
+  | { t: 'setRating', id: string, rating: number }
   ;
 
 export type Dispatch = (action: Action) => void;

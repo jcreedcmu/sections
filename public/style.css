@@ -85,3 +85,12 @@ td { vertical-align: top; padding: 0.5em;}
 }
 
 h5 {  margin: 0px; }
+
+.likes-container {
+  width: 54px; /* (16px content + 2px margin) * 3 */
+}
+
+.likes-container svg {
+  margin: 1px;
+cursor:  pointer;
+}
