@@ -87,6 +87,10 @@ function renderLeftItem(state: AppState, sbstate: StoryPanelState, item: ParsedI
     rowStyle.zIndex = 1000;
     rowStyle.position = 'relative';
   }
+  if (attrs.title == undefined) {
+    rowStyle.backgroundColor = 'yellow';
+  }
+
   return <tr key={id} onMouseDown={e => rowOnMouseDown(id)} style={rowStyle}><td>{effectiveTitle}</td></tr>;
 }
 
