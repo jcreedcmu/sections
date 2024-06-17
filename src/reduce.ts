@@ -80,6 +80,7 @@ export function reduce(state: AppState, action: Action): AppState {
       }
       else {
         console.error(`setCurrentItem: incompatible navState`);
+        return state;
       }
     }
   }
