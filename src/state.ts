@@ -8,7 +8,6 @@ export type NavState =
   | { t: 'storybits', sbstate: StoryPanelState }
   | { t: 'tags' }
   | { t: 'query-tag', tag: string }
-  | { t: 'anomalies' }
   ;
 
 export type AppState = {
@@ -21,7 +20,6 @@ export type AppState = {
 
 export function navStateOfHash(hash: string): NavState {
   if (hash.match(/^#tags$/)) return { t: 'tags' };
-  if (hash.match(/^#anomalies$/)) return { t: 'anomalies' };
   let m;
   if (m = hash.match(/^#query-tag=(.*)$/)) {
     return { t: 'query-tag', tag: m[1] };
@@ -34,7 +32,6 @@ export function hashOfNavState(navState: NavState): string {
     case 'storybits': return '';
     case 'tags': return '#tags';
     case 'query-tag': return `#query-tag=${navState.tag}`;
-    case 'anomalies': return '#anomalies';
   }
 }
 
