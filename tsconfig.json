@@ -10,6 +10,6 @@
     "skipLibCheck": true
   },
   "include": [
-    "src/**/*.ts", "src/**/*.tsx"
+    "src/**/*.ts", "src/**/*.tsx", "migration/*/*.ts"
   ],
 }
