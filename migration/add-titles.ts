@@ -1,5 +1,5 @@
-import { get_all_items } from '../server/notes-lib'
-import { parsed_item_of_item } from '../server/notes-lib-pure';
+import { get_all_items } from '../lib/notes-lib'
+import { parsed_item_of_item } from '../lib/notes-lib-pure';
 
 const items = get_all_items().map(parsed_item_of_item);
 
@@ -17,7 +17,6 @@ items.forEach(item => {
     item.body.split(/\n/).filter(x => x.length).forEach(line => {
       let m;
       if (m = line.match(/- link:\[[A-Z]+\/([-a-f0-9]+)\]\[.*?\] (.*)/)) {
-        //        console.log(m[1], m[2]);
         const guid = m[1];
         let title = m[2];
         const ratingRe = / \(..?\)/;

@@ -1,10 +1,11 @@
 import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Item, struct_of_notes } from './notes-lib-pure';
-import { ServerData } from '../server/server-types';
+import { Item, ParsedItem, ServerData, SidecarData, item_of_parsed_item, notes_of_struct, struct_of_notes } from './notes-lib-pure';
+import { canonicalize } from '../server/canonicalize';
 
 export const dataDir = path.join(__dirname, '../../../self');
+export const sidecarFile = path.join(dataDir, 'sidecar.json');
 
 export const ALL_NOTES_FILES: string[] = [
   'NOTES', 'IDEAS', 'IDEAS-2011-2016', 'CONWORLD', 'STORYMETA'
@@ -39,6 +40,45 @@ export function get_all_items(): Item[] {
   return items;
 }
 
-export function write_all_data(data: ServerData) {
+export class NotesWriteError extends Error { }
 
+export function write_all_items(items: ParsedItem[]): string {
+  let rv = '';
+
+  const files = notes_of_struct(items.map(item_of_parsed_item));
+  const paths = [...Object.keys(files), 'sidecar.json'].map(path_of_file);
+  const unsafe_paths = paths.filter(path => !safe_to_overwrite(path));
+
+  if (unsafe_paths.length > 0) {
+    const appendNewline = (x: string) => `   ${x}\n`;
+    const msg = `Refusing to proceed because there are uncommitted changes to:
+${unsafe_paths.map(appendNewline).join('')}`;
+    throw new NotesWriteError(msg);
+  }
+
+  let msg = '';
+  for (const notesFile of Object.keys(files)) {
+    const path = path_of_file(notesFile);
+    msg += `Generating ${notesFile}...\n`;
+    fs.writeFileSync(path, files[notesFile].join('').replace(/\n$/, ''), 'utf8');
+  }
+
+  return msg;
+}
+
+export function write_sidecar(sidecar: SidecarData): string {
+  let msg = '';
+
+  const json = canonicalize(sidecar);
+  if (json == undefined) {
+    throw new NotesWriteError(`${msg}\n ... but couldn't canonicalize sidecar data`);
+  }
+  msg += `Generating sidecar.json...\n`;
+  fs.writeFileSync(sidecarFile, json, 'utf8');
+
+  return msg;
+}
+
+export function write_all_data(data: ServerData): string {
+  return write_all_items(data.items) + write_sidecar(data.sidecar);
 }

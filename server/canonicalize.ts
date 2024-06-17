@@ -1,4 +1,5 @@
 // based loosely on https://github.com/isaacs/json-stringify-nice/blob/master/index.js
+// XXX move to lib
 
 function isObj(val: any) {
   return !!val && !Array.isArray(val) && typeof val === 'object'
