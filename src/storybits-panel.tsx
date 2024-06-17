@@ -4,6 +4,7 @@ import { renderTags } from './render-tag';
 import { Dispatch } from './action';
 import { Skull, Heart, SolidHeart } from './svg-graphics';
 import { ParsedItem } from './notes-lib';
+import { parseNotesDate } from './util';
 
 export type StoryPanelState = {
   currentItemId: string | undefined,
@@ -52,51 +53,67 @@ function renderItem(state: AppState, item: ParsedItem, dispatch: Dispatch): JSX.
     {maybeTitle}{maybeAttrs}<br /><pre>{body}</pre>
   </div>;
   return rv;
-
-
 }
 
-export function storybitsPanel(state: AppState, sbstate: StoryPanelState, dispatch: Dispatch): JSX.Element {
-  const { data: { items } } = state;
-
+function renderLeftItem(state: AppState, sbstate: StoryPanelState, item: ParsedItem, dispatch: Dispatch): JSX.Element {
+  const { tags, attrs, body, date, file, meta } = item;
+  const id = meta?.id;
 
   function rowOnMouseDown(id: string) {
     dispatch({ t: 'setCurrentItem', id });
   }
 
-  const leftItems = items.flatMap(item => {
+  if (id == undefined) {
+    throw new Error(`id undefined`);
+  }
+
+  const PREFIX_LIMIT = 25;
+  const effectiveTitle = attrs.title ?? '(' + body.substring(0, PREFIX_LIMIT) + (body.length >= PREFIX_LIMIT ? '...' : '') + ')';
+  const { title: _, ...otherAttrs } = attrs;
+  const rowStyle: React.CSSProperties = {
+  };
+  const rating = state.data.sidecar.rating[id] ?? 0;
+  if (rating == -1) {
+    rowStyle.opacity = '50%';
+  }
+  if (rating == 1) {
+    rowStyle.backgroundColor = '#fee';
+  }
+  if (rating == 2) {
+    rowStyle.backgroundColor = '#faa';
+  }
+  if (id == sbstate.currentItemId) {
+    rowStyle.boxShadow = '0px 0px 5px 5px #47c';
+    rowStyle.zIndex = 1000;
+    rowStyle.position = 'relative';
+  }
+  return <tr key={id} onMouseDown={e => rowOnMouseDown(id)} style={rowStyle}><td>{effectiveTitle}</td></tr>;
+}
+
+export function storybitsPanel(state: AppState, sbstate: StoryPanelState, dispatch: Dispatch): JSX.Element {
+  const { data: { items } } = state;
+
+  const leftRows: JSX.Element[] = [];
+
+  let prevYear: number | undefined;
+
+  for (const item of items) {
     const { tags, attrs, body, date, file, meta } = item;
-
-    if (!(tags.includes('storybits') || file == 'CONWORLD')) return [];
-    const id = meta?.id;
-
-    if (id == undefined) {
-      throw new Error(`id undefined`);
+    const { year, month, day } = parseNotesDate(date);
+    if (!(tags.includes('storybits') || file == 'CONWORLD'))
+      continue;
+    if (year != prevYear) {
+      const yearStyle: React.CSSProperties = {
+        fontSize: '1.5em',
+        backgroundColor: '#ddd',
+        cursor: 'default',
+      };
+      leftRows.push(<tr style={yearStyle}><td>{year}</td></tr>);
     }
-
-    const PREFIX_LIMIT = 25;
-    const effectiveTitle = attrs.title ?? '(' + body.substring(0, PREFIX_LIMIT) + (body.length >= PREFIX_LIMIT ? '...' : '') + ')';
-    const { title: _, ...otherAttrs } = attrs;
-    const rowStyle: React.CSSProperties = {
-    };
-    const rating = state.data.sidecar.rating[id] ?? 0;
-    if (rating == -1) {
-      rowStyle.opacity = '50%';
-    }
-    if (rating == 1) {
-      rowStyle.backgroundColor = '#fee';
-    }
-    if (rating == 2) {
-      rowStyle.backgroundColor = '#faa';
-    }
-    if (id == sbstate.currentItemId) {
-      rowStyle.boxShadow = '0px 0px 5px 5px #47c';
-      rowStyle.zIndex = 1000;
-      rowStyle.position = 'relative';
-    }
-    return [<tr key={id} onMouseDown={e => rowOnMouseDown(id)} style={rowStyle}><td>{effectiveTitle}</td></tr>];
-  });
-  const leftContent = <table><tbody>{leftItems}</tbody></table>;
+    leftRows.push(renderLeftItem(state, sbstate, item, dispatch));
+    prevYear = year;
+  }
+  const leftContent = <table><tbody>{leftRows}</tbody></table>;
   const rightContent = sbstate.currentItemId == undefined ? undefined : renderItemId(state, sbstate.currentItemId, dispatch);
 
   const containerStyle: React.CSSProperties = {
