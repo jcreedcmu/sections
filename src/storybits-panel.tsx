@@ -77,9 +77,22 @@ export function storybitsPanel(state: AppState, sbstate: StoryPanelState, dispat
     const PREFIX_LIMIT = 25;
     const effectiveTitle = attrs.title ?? '(' + body.substring(0, PREFIX_LIMIT) + (body.length >= PREFIX_LIMIT ? '...' : '') + ')';
     const { title: _, ...otherAttrs } = attrs;
-    const rowStyle: React.CSSProperties = {};
+    const rowStyle: React.CSSProperties = {
+    };
+    const rating = state.data.sidecar.rating[id] ?? 0;
+    if (rating == -1) {
+      rowStyle.opacity = '50%';
+    }
+    if (rating == 1) {
+      rowStyle.backgroundColor = '#fee';
+    }
+    if (rating == 2) {
+      rowStyle.backgroundColor = '#faa';
+    }
     if (id == sbstate.currentItemId) {
-      rowStyle.backgroundColor = '#def';
+      rowStyle.boxShadow = '0px 0px 5px 5px #47c';
+      rowStyle.zIndex = 1000;
+      rowStyle.position = 'relative';
     }
     return [<tr key={id} onMouseDown={e => rowOnMouseDown(id)} style={rowStyle}><td>{effectiveTitle}</td></tr>];
   });
