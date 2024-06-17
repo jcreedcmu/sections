@@ -14,8 +14,9 @@ export function Navbar(props: NavbarProps): JSX.Element {
     if (props.navState.t == navState.t) { classNames.push('active'); }
     return <div className={classNames.join(' ')} onMouseDown={() => { dispatch({ t: 'setNavState', navState }) }}>{name}</div>
   }
+  // XXX clicking on Storybits button shouldn't clear storybits panel state, ideally
   return <div className="topnav">
-    {navButton('Storybits', { t: 'storybits' })}
+    {navButton('Storybits', { t: 'storybits', sbstate: { currentItemId: undefined } })}
     {navButton('Tags', { t: 'tags' })}
     {navButton('Anomalies', { t: 'anomalies' })}
     <div className="nav-spacer" />

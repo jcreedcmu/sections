@@ -22,7 +22,7 @@ export type AppProps = {
 function getPanel(state: AppState, dispatch: Dispatch): JSX.Element {
   const ns = state.navState;
   switch (ns.t) {
-    case 'storybits': return storybitsPanel(state, dispatch);
+    case 'storybits': return storybitsPanel(state, ns.sbstate, dispatch);
     case 'tags': return tagsPanel(state, dispatch);
     case 'query-tag': return queryTagPanel(state, ns.tag, dispatch);
     case 'anomalies': return anomaliesPanel(state, dispatch);

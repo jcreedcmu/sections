@@ -3,6 +3,11 @@ import { AppState } from "./state";
 import { renderTags } from './render-tag';
 import { Dispatch } from './action';
 import { Skull, Heart, SolidHeart } from './svg-graphics';
+import { ParsedItem } from './notes-lib';
+
+export type StoryPanelState = {
+  currentItemId: string | undefined,
+};
 
 function renderLikes(id: string, rating: number, dispatch: Dispatch) {
   const skullProps = rating == -1 ? { fill: "#000" } : { stroke: "#777", strokeWidth: 2, fill: "none" };
@@ -15,29 +20,50 @@ function renderLikes(id: string, rating: number, dispatch: Dispatch) {
   </div>;
 }
 
-export function storybitsPanel(state: AppState, dispatch: Dispatch): JSX.Element {
+function renderItemId(state: AppState, id: string, dispatch: Dispatch): JSX.Element | undefined {
+  const item = state.data.items.find(item => item.meta?.id == id);
+  if (item == undefined) {
+    console.error(`Couldn't find item with id {id}`);
+    return undefined;
+  }
+  return renderItem(state, item, dispatch);
+}
+
+function renderItem(state: AppState, item: ParsedItem, dispatch: Dispatch): JSX.Element {
+
+  const { tags, attrs, body, date, file, meta } = item;
+
+
+  const id = meta?.id;
+
+  if (id == undefined) {
+    throw new Error(`id undefined`);
+  }
+
+  const maybeTitle = attrs.title != undefined ? <h2>{attrs.title}</h2> : undefined;
+  const { title: _, ...otherAttrs } = attrs;
+  const maybeAttrs = Object.keys(otherAttrs).length > 0 ? 'otherAttrs=' + JSON.stringify(otherAttrs) : undefined;
+  const rating = state.data.sidecar.rating[id] ?? 0;
+  const entryClassName = rating < 0 ? 'faded' : undefined;
+  const rv = <div>
+    {date}<br />
+    <span className="guid">{id}</span>
+    {renderLikes(id, rating, dispatch)}<br />
+    {maybeTitle}{maybeAttrs}<br /><pre>{body}</pre>
+  </div>;
+  return rv;
+
+
+}
+
+export function storybitsPanel(state: AppState, sbstate: StoryPanelState, dispatch: Dispatch): JSX.Element {
   const { data: { items } } = state;
-  const renderItems = items.flatMap((item, ix) => {
-    const { tags, attrs, body, date, file, meta } = item;
 
-    if (!(tags.includes('storybits') || file == 'CONWORLD')) return [];
-    const id = meta?.id;
 
-    if (id == undefined) {
-      throw new Error(`id undefined`);
-    }
+  function rowOnMouseDown(id: string) {
+    dispatch({ t: 'setCurrentItem', id });
+  }
 
-    const maybeTitle = attrs.title != undefined ? <h5>{attrs.title}</h5> : undefined;
-    const { title: _, ...otherAttrs } = attrs;
-    const maybeAttrs = Object.keys(otherAttrs).length > 0 ? 'otherAttrs=' + JSON.stringify(otherAttrs) : undefined;
-    const rating = state.data.sidecar.rating[id] ?? 0;
-    const entryClassName = rating < 0 ? 'faded' : undefined;
-    const entry = <tr key={id} className={entryClassName}><td>{date}<br />
-      <span className="guid">{id}</span></td>
-      <td>{renderLikes(id, rating, dispatch)}</td><td>{maybeTitle}{maybeAttrs}<pre>{body}</pre></td></tr>;
-    return [entry];
-  });
-  const old = <table className="zebra"><tbody>{renderItems}</tbody></table>;
   const leftItems = items.flatMap(item => {
     const { tags, attrs, body, date, file, meta } = item;
 
@@ -51,11 +77,15 @@ export function storybitsPanel(state: AppState, dispatch: Dispatch): JSX.Element
     const PREFIX_LIMIT = 25;
     const effectiveTitle = attrs.title ?? '(' + body.substring(0, PREFIX_LIMIT) + (body.length >= PREFIX_LIMIT ? '...' : '') + ')';
     const { title: _, ...otherAttrs } = attrs;
-
-    return [<tr key={id}><td >{effectiveTitle}</td></tr>];
+    const rowStyle: React.CSSProperties = {};
+    if (id == sbstate.currentItemId) {
+      rowStyle.backgroundColor = '#def';
+    }
+    return [<tr key={id} onMouseDown={e => rowOnMouseDown(id)} style={rowStyle}><td>{effectiveTitle}</td></tr>];
   });
-  const leftContents = <table><tbody>{leftItems}</tbody></table>;
-  const rightContents = "hello";
+  const leftContent = <table><tbody>{leftItems}</tbody></table>;
+  const rightContent = sbstate.currentItemId == undefined ? undefined : renderItemId(state, sbstate.currentItemId, dispatch);
+
   const containerStyle: React.CSSProperties = {
     display: 'flex',
     flexDirection: 'row',
@@ -70,17 +100,23 @@ export function storybitsPanel(state: AppState, dispatch: Dispatch): JSX.Element
     fontSize: '0.75em',
     fontFamily: 'sans-serif',
     whiteSpace: 'nowrap',
+    userSelect: 'none',
+    cursor: 'pointer',
   };
   const rightStyle: React.CSSProperties = {
     flexGrow: 1,
     flexBasis: 0,
-    backgroundColor: '#eef',
+    overflowY: 'scroll',
+    overflowX: 'hidden',
+    backgroundColor: sbstate.currentItemId == undefined ? '#eef' : undefined,
+    padding: '1em',
+    borderLeft: '1px solid #aaa',
   };
 
   return <div className="fixed-panel">
     <div style={containerStyle}>
-      <div style={leftStyle}>{leftContents}</div>
-      <div style={rightStyle}>{rightContents}</div>
+      <div style={leftStyle}>{leftContent}</div>
+      <div style={rightStyle}>{rightContent}</div>
     </div>
   </div>;
 }

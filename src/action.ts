@@ -15,6 +15,7 @@ export type Action =
   | { t: 'giveGuid', itemIx: number, guid: string }
   | { t: 'splitItem', itemIx: number, variant: SplitVariant } // XXX deprecated
   | { t: 'setRating', id: string, rating: number }
+  | { t: 'setCurrentItem', id: string }
   ;
 
 export type Dispatch = (action: Action) => void;

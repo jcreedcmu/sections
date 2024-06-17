@@ -2,9 +2,10 @@ import { ServerData } from "../server/server-types";
 import { AppProps } from "./app";
 import { Effect } from "./effect";
 import { ParsedItem } from "./notes-lib";
+import { StoryPanelState } from "./storybits-panel";
 
 export type NavState =
-  | { t: 'storybits' }
+  | { t: 'storybits', sbstate: StoryPanelState }
   | { t: 'tags' }
   | { t: 'query-tag', tag: string }
   | { t: 'anomalies' }
@@ -25,7 +26,7 @@ export function navStateOfHash(hash: string): NavState {
   if (m = hash.match(/^#query-tag=(.*)$/)) {
     return { t: 'query-tag', tag: m[1] };
   }
-  return { t: 'storybits' };
+  return { t: 'storybits', sbstate: { currentItemId: undefined } };
 }
 
 export function hashOfNavState(navState: NavState): string {

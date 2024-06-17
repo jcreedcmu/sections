@@ -66,5 +66,21 @@ export function reduce(state: AppState, action: Action): AppState {
         s.data.sidecar.rating[action.id] = action.rating;
       });
     }
+    case 'setCurrentItem': {
+      const ns = state.navState;
+      if (ns.t == 'storybits') {
+        const newNavState = produce(ns, s => {
+          s.sbstate = {
+            currentItemId: action.id
+          };
+        });
+        return produce(state, s => {
+          s.navState = newNavState;
+        });
+      }
+      else {
+        console.error(`setCurrentItem: incompatible navState`);
+      }
+    }
   }
 }
