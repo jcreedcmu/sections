@@ -2,6 +2,7 @@ import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Item, struct_of_notes } from './notes-lib-pure';
+import { ServerData } from '../server/server-types';
 
 export const dataDir = path.join(__dirname, '../../../self');
 
@@ -36,4 +37,8 @@ export function get_all_items(): Item[] {
   });
 
   return items;
+}
+
+export function write_all_data(data: ServerData) {
+
 }

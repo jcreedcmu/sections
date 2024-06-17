@@ -1,7 +1,6 @@
-import { Item, ParsedItem } from './notes-lib';
+import { Item, ParsedItem, ServerData } from './notes-lib';
 import { Dispatch } from "./action";
 import { AppState } from "./state";
-import { ServerData } from '../server/server-types';
 
 export type Effect =
   | { t: 'save', data: ServerData }

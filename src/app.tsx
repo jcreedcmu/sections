@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { doEffect } from './effect';
 import { extractEffects } from './lib/extract-effects';
 import { useEffectfulReducer } from './lib/use-effectful-reducer';
-import { ParsedItem } from './notes-lib';
+import { ParsedItem, ServerData } from './notes-lib';
 import { reduce } from './reduce';
 import { AppState, mkState, navStateOfHash } from './state';
 import { Navbar } from './navbar';
@@ -11,7 +11,6 @@ import { storybitsPanel } from './storybits-panel';
 import { tagsPanel } from './tags-panel';
 import { queryTagPanel } from './query-tag-panel';
 import { Dispatch } from './action';
-import { ServerData } from '../server/server-types';
 
 export type AppProps = {
   data: ServerData,

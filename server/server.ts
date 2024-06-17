@@ -2,8 +2,7 @@ import express from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
 import { dataDir, get_all_items, path_of_file, safe_to_overwrite, } from '../lib/notes-lib';
-import { ParsedItem, item_of_parsed_item, notes_of_struct, parsed_item_of_item } from '../lib/notes-lib-pure';
-import { ServerData, SidecarData } from './server-types';
+import { ServerData, SidecarData, item_of_parsed_item, notes_of_struct, parsed_item_of_item } from '../lib/notes-lib-pure';
 import { canonicalize } from './canonicalize';
 
 const app = express();

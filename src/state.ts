@@ -1,7 +1,6 @@
-import { ServerData } from "../server/server-types";
 import { AppProps } from "./app";
 import { Effect } from "./effect";
-import { ParsedItem } from "./notes-lib";
+import { ServerData, ParsedItem } from "./notes-lib";
 import { StoryPanelState } from "./storybits-panel";
 
 export type NavState =
