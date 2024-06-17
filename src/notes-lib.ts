@@ -1,1 +1,1 @@
-export * from '../server/notes-lib-pure';
+export * from '../lib/notes-lib-pure';

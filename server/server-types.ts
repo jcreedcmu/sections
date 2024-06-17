@@ -1,4 +1,4 @@
-import { ParsedItem } from "./notes-lib-pure";
+import { ParsedItem } from "../lib/notes-lib-pure";
 
 // This is data that I don't want to save inline in my notesfiles, but
 // elsewhere. I expect it to be mostly stuff I expect to edit in-gui,

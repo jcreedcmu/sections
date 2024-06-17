@@ -11,5 +11,6 @@
   },
   "include": [
     "./**/*.ts"
-  ],
+    "../lib/notes-lib.ts"  ],
 }
+, "../lib/notes-lib-pure.ts"
