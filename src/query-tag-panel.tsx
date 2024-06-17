@@ -14,5 +14,5 @@ export function queryTagPanel(state: AppState, tag: string, dispatch: Dispatch):
       <span className="guid">{meta?.id ?? ''}</span></td>
       <td>{renderTags(tags, dispatch)}</td><td><pre>{body}</pre></td></tr>];
   });
-  return <table className="zebra"><tbody>{renderItems}</tbody></table>;
+  return <div className="panel"><table className="zebra"><tbody>{renderItems}</tbody></table></div>;
 }
