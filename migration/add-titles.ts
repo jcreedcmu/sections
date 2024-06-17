@@ -1,10 +1,11 @@
-import { get_all_items } from '../lib/notes-lib'
+import { produce } from 'immer';
+import { get_all_items, write_all_items } from '../lib/notes-lib'
 import { parsed_item_of_item } from '../lib/notes-lib-pure';
 
 const items = get_all_items().map(parsed_item_of_item);
 
 type Renaming = {
-  guid: string,
+  index: number,
   title: string,
 };
 const renamings: Renaming[] = [];
@@ -23,15 +24,21 @@ items.forEach(item => {
         if (title.match(ratingRe)) {
           title = title.replace(ratingRe, '');
         }
-        const matchedItem = items.find(it => it.meta?.id == guid);
-        if (matchedItem == undefined) {
+        const index = items.findIndex(it => it.meta?.id == guid);
+        if (index == -1) {
           console.log(`### Couldn't find ${guid}`);
           return;
         }
-        renamings.push({ guid, title });
+        renamings.push({ index, title });
       }
     });
   }
 });
 
-console.log(JSON.stringify(renamings, null, 2));
+const newItems = produce(items, s => {
+  renamings.forEach(ren => {
+    items[ren.index].attrs.title = ren.title;
+  });
+});
+
+write_all_items(newItems);
