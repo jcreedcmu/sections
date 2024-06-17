@@ -44,9 +44,7 @@ export function App(props: AppProps): JSX.Element {
   });
   return <>
     <Navbar dispatch={dispatch} navState={state.navState} />
-    <div className="panel">
-      {getPanel(state, dispatch)}
-    </div>
+    {getPanel(state, dispatch)}
 
   </>;
 }

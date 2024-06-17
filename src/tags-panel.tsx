@@ -16,5 +16,5 @@ export function tagsPanel(state: AppState, dispatch: Dispatch): JSX.Element {
     .map(([key, value]) => {
       return <tr><td>{renderTag(key, dispatch)}</td><td>{value}</td></tr>;
     });
-  return <table className="zebra"><tbody>{renderItems}</tbody></table>;
+  return <div className="panel"><table className="zebra"><tbody>{renderItems}</tbody></table></div>;
 }

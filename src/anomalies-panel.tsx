@@ -37,5 +37,5 @@ export function anomaliesPanel(state: AppState, dispatch: Dispatch): JSX.Element
       <span className="guid">{arrayJoin(buttons, <br />)}</span></td>
       <td>{renderTags(tags, dispatch)}</td><td><pre>{body}</pre></td></tr>];
   });
-  return <table className="zebra"><tbody>{renderItems}</tbody></table>;
+  return <div className="panel"><table className="zebra"><tbody>{renderItems}</tbody></table></div>;
 }
