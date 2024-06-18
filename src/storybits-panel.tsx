@@ -50,6 +50,7 @@ function renderItem(state: AppState, item: ParsedItem, dispatch: Dispatch): JSX.
   const entryClassName = rating < 0 ? 'faded' : undefined;
   const rv = <div>
     {date}<br />
+    <button onMouseDown={(e) => { dispatch({ t: 'scrollItemIntoView' }) }}>show</button><br />
     <span className="guid">{id}</span>
     {renderLikes(id, rating, dispatch)}<br />
     {maybeTitle}{maybeAttrs}<br /><pre>{body}</pre>

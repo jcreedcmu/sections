@@ -16,6 +16,7 @@ export type Action =
   | { t: 'splitItem', itemIx: number, variant: SplitVariant } // XXX deprecated
   | { t: 'setRating', id: string, rating: number }
   | { t: 'setCurrentItem', id: string }
+  | { t: 'scrollItemIntoView' }
   ;
 
 export type Dispatch = (action: Action) => void;

@@ -41,7 +41,7 @@ function getPanel(state: AppState, dispatch: Dispatch, pprops: ExtraPanelProps):
 
 export function App(props: AppProps): JSX.Element {
   const leftItemRef = React.useRef<HTMLTableRowElement>(null);
-  const [state, dispatch] = useEffectfulReducer(mkState(props), extractEffects(reduce), doEffect);
+  const [state, dispatch] = useEffectfulReducer(mkState(props), extractEffects(reduce), doEffect(leftItemRef));
   const { counter } = state;
   const { data: { items } } = props;
   function onHashChange() {

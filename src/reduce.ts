@@ -83,5 +83,10 @@ export function reduce(state: AppState, action: Action): AppState {
         return state;
       }
     }
+    case 'scrollItemIntoView': {
+      return produce(state, s => {
+        s.effects.push({ t: 'scrollItemIntoView' });
+      });
+    }
   }
 }
