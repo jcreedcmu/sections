@@ -92,7 +92,11 @@ function renderLeftItem(state: AppState, sbstate: StoryPanelState, item: ParsedI
     rowStyle.backgroundColor = 'yellow';
   }
 
-  return <tr key={id} onMouseDown={e => rowOnMouseDown(id)} style={rowStyle}><td>{effectiveTitle}</td></tr>;
+  let icons: string | undefined = undefined;
+  if (id != undefined && state.data.collectedIds.has(id)) {
+    icons = '✔️';
+  }
+  return <tr key={id} onMouseDown={e => rowOnMouseDown(id)} style={rowStyle}><td>{icons}</td><td>{effectiveTitle}</td></tr>;
 }
 
 export function storybitsPanel(state: AppState, sbstate: StoryPanelState, dispatch: Dispatch): JSX.Element {
@@ -113,7 +117,7 @@ export function storybitsPanel(state: AppState, sbstate: StoryPanelState, dispat
         backgroundColor: '#ddd',
         cursor: 'default',
       };
-      leftRows.push(<tr style={yearStyle}><td>{year}</td></tr>);
+      leftRows.push(<tr style={yearStyle}><td colSpan={2}>{year}</td></tr>);
     }
     leftRows.push(renderLeftItem(state, sbstate, item, dispatch));
     prevYear = year;
@@ -129,7 +133,7 @@ export function storybitsPanel(state: AppState, sbstate: StoryPanelState, dispat
   };
   const leftStyle: React.CSSProperties = {
     flexGrow: 0,
-    flexBasis: '200px',
+    flexBasis: '250px',
     overflowY: 'scroll',
     overflowX: 'hidden',
     fontSize: '0.75em',

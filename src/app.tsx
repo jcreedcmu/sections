@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { doEffect } from './effect';
 import { extractEffects } from './lib/extract-effects';
 import { useEffectfulReducer } from './lib/use-effectful-reducer';
-import { ParsedItem, ServerData } from './notes-lib';
+import { ParsedItem, ServerData, get_collected_lines, linkRegexp } from './notes-lib';
 import { reduce } from './reduce';
 import { AppState, mkState, navStateOfHash } from './state';
 import { Navbar } from './navbar';
@@ -15,6 +15,7 @@ import { collectedPanel } from './collected-panel';
 
 export type AugmentedServerData = ServerData & {
   indexOfId: Record<string, number>,
+  collectedIds: Set<string>, // ids that appear in COLLECTED
 };
 
 export type AppProps = {
@@ -65,12 +66,28 @@ function precomputeIndexOfId(items: ParsedItem[]): Record<string, number> {
   return rv;
 }
 
+function precomputeCollectedIds(collected: string): Set<string> {
+  const lines = get_collected_lines(collected);
+  const rv = new Set<string>();
+  lines.forEach(line => {
+    for (const match of line.matchAll(linkRegexp)) {
+      const [substr, file, id, title] = match;
+      rv.add(id);
+    }
+  });
+  console.log(rv);
+  return rv;
+}
+
 export async function init() {
   const req = new Request('/json/data.json');
   const data: ServerData = await (await fetch(req)).json();
-  const indexOfId = precomputeIndexOfId(data.items);
   const props: AppProps = {
-    data: { ...data, indexOfId },
+    data: {
+      ...data,
+      indexOfId: precomputeIndexOfId(data.items),
+      collectedIds: precomputeCollectedIds(data.collected),
+    },
     hash: window.location.hash,
   };
   const root = createRoot(document.querySelector('.app')!);

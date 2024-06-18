@@ -173,22 +173,26 @@ export function item_of_parsed_item(pitem: ParsedItem): Item {
 }
 
 
+export function get_collected_lines(collected: string): string[] {
+  return collected
+    .split('\n')
+    .map(x => x.replace(/#.*/, ''))
+    .filter(x => x.match(/\S/));
+}
+
+export const linkRegexp = /link:\[(.*?)\/(.*?)\]\[(.*?)\]/g;
+
 // XXX: consider returning JSX.Element?
 export function render_collected(data: ServerData): string {
   function applyTransclusions(line: string) {
-    return line.replace(/link:\[(.*?)\]\[(.*?)\]/g, (substring, idString) => {
-      const id = idString.replace(/.*\//, '');
+    return line.replace(linkRegexp, (substring, file, id) => {
       const item = data.items.find(item => item.meta?.id == id);
       if (item == undefined)
         return `[id ${id} not found]`;
       return item.body + '\n';
     });
   }
-  const raw = data.collected;
-  const lines = raw
-    .split('\n')
-    .map(x => x.replace(/#.*/, ''))
-    .filter(x => x.match(/\S/))
+  const lines = get_collected_lines(data.collected)
     .map(applyTransclusions);
   return lines.map(x => `${x}\n`).join('');
 }
