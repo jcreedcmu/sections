@@ -6,6 +6,7 @@ import { StoryPanelState } from "./storybits-panel";
 export type NavState =
   | { t: 'storybits', sbstate: StoryPanelState }
   | { t: 'tags' }
+  | { t: 'collected' }
   | { t: 'query-tag', tag: string }
   ;
 
@@ -19,6 +20,7 @@ export type AppState = {
 
 export function navStateOfHash(hash: string): NavState {
   if (hash.match(/^#tags$/)) return { t: 'tags' };
+  if (hash.match(/^#collected$/)) return { t: 'collected' };
   let m;
   if (m = hash.match(/^#query-tag=(.*)$/)) {
     return { t: 'query-tag', tag: m[1] };
@@ -30,6 +32,7 @@ export function hashOfNavState(navState: NavState): string {
   switch (navState.t) {
     case 'storybits': return '';
     case 'tags': return '#tags';
+    case 'collected': return '#collected';
     case 'query-tag': return `#query-tag=${navState.tag}`;
   }
 }

@@ -11,6 +11,7 @@ import { storybitsPanel } from './storybits-panel';
 import { tagsPanel } from './tags-panel';
 import { queryTagPanel } from './query-tag-panel';
 import { Dispatch } from './action';
+import { collectedPanel } from './collected-panel';
 
 export type AppProps = {
   data: ServerData,
@@ -23,6 +24,7 @@ function getPanel(state: AppState, dispatch: Dispatch): JSX.Element {
     case 'storybits': return storybitsPanel(state, ns.sbstate, dispatch);
     case 'tags': return tagsPanel(state, dispatch);
     case 'query-tag': return queryTagPanel(state, ns.tag, dispatch);
+    case 'collected': return collectedPanel(state, dispatch);
   }
 }
 

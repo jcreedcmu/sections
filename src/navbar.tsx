@@ -18,6 +18,7 @@ export function Navbar(props: NavbarProps): JSX.Element {
   return <div className="topnav">
     {navButton('Storybits', { t: 'storybits', sbstate: { currentItemId: undefined } })}
     {navButton('Tags', { t: 'tags' })}
+    {navButton('Collected', { t: 'collected' })}
     <div className="nav-spacer" />
     <div className="nav-button nav-green" onMouseDown={(e) => { dispatch({ t: 'save' }) }}>Save</div>
   </div >
