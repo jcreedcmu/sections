@@ -75,7 +75,6 @@ function precomputeCollectedIds(collected: string): Set<string> {
       rv.add(id);
     }
   });
-  console.log(rv);
   return rv;
 }
 
