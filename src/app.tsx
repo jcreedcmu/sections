@@ -23,10 +23,16 @@ export type AppProps = {
   hash: string,
 };
 
-function getPanel(state: AppState, dispatch: Dispatch): JSX.Element {
+export type LeftItemRef = React.RefObject<HTMLTableRowElement>;
+
+export type ExtraPanelProps = {
+  leftItemRef: LeftItemRef,
+};
+
+function getPanel(state: AppState, dispatch: Dispatch, pprops: ExtraPanelProps): JSX.Element {
   const ns = state.navState;
   switch (ns.t) {
-    case 'storybits': return storybitsPanel(state, ns.sbstate, dispatch);
+    case 'storybits': return storybitsPanel(state, ns.sbstate, dispatch, pprops);
     case 'tags': return tagsPanel(state, dispatch);
     case 'query-tag': return queryTagPanel(state, ns.tag, dispatch);
     case 'collected': return collectedPanel(state, dispatch);
@@ -34,6 +40,7 @@ function getPanel(state: AppState, dispatch: Dispatch): JSX.Element {
 }
 
 export function App(props: AppProps): JSX.Element {
+  const leftItemRef = React.useRef<HTMLTableRowElement>(null);
   const [state, dispatch] = useEffectfulReducer(mkState(props), extractEffects(reduce), doEffect);
   const { counter } = state;
   const { data: { items } } = props;
@@ -48,7 +55,7 @@ export function App(props: AppProps): JSX.Element {
   });
   return <>
     <Navbar dispatch={dispatch} navState={state.navState} />
-    {getPanel(state, dispatch)}
+    {getPanel(state, dispatch, { leftItemRef })}
 
   </>;
 }

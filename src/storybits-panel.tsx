@@ -5,6 +5,7 @@ import { Dispatch } from './action';
 import { Skull, Heart, SolidHeart } from './svg-graphics';
 import { ParsedItem } from './notes-lib';
 import { parseNotesDate } from './util';
+import { ExtraPanelProps, LeftItemRef } from './app';
 
 export type StoryPanelState = {
   currentItemId: string | undefined,
@@ -56,7 +57,7 @@ function renderItem(state: AppState, item: ParsedItem, dispatch: Dispatch): JSX.
   return rv;
 }
 
-function renderLeftItem(state: AppState, sbstate: StoryPanelState, item: ParsedItem, dispatch: Dispatch): JSX.Element {
+function renderLeftItem(state: AppState, sbstate: StoryPanelState, item: ParsedItem, dispatch: Dispatch, pprops: ExtraPanelProps): JSX.Element {
   const { tags, attrs, body, date, file, meta } = item;
   const id = meta?.id;
 
@@ -74,6 +75,7 @@ function renderLeftItem(state: AppState, sbstate: StoryPanelState, item: ParsedI
   const rowStyle: React.CSSProperties = {
   };
   const rating = state.data.sidecar.rating[id] ?? 0;
+  let ref: undefined | LeftItemRef;
   if (rating == -1) {
     rowStyle.opacity = '50%';
   }
@@ -87,6 +89,7 @@ function renderLeftItem(state: AppState, sbstate: StoryPanelState, item: ParsedI
     rowStyle.boxShadow = '0px 0px 5px 5px #47c';
     rowStyle.zIndex = 1000;
     rowStyle.position = 'relative';
+    ref = pprops.leftItemRef;
   }
   if (attrs.title == undefined) {
     rowStyle.backgroundColor = 'yellow';
@@ -96,10 +99,10 @@ function renderLeftItem(state: AppState, sbstate: StoryPanelState, item: ParsedI
   if (id != undefined && state.data.collectedIds.has(id)) {
     icons = '✔️';
   }
-  return <tr key={id} onMouseDown={e => rowOnMouseDown(id)} style={rowStyle}><td>{icons}</td><td>{effectiveTitle}</td></tr>;
+  return <tr key={id} ref={ref} onMouseDown={e => rowOnMouseDown(id)} style={rowStyle}><td>{icons}</td><td>{effectiveTitle}</td></tr>;
 }
 
-export function storybitsPanel(state: AppState, sbstate: StoryPanelState, dispatch: Dispatch): JSX.Element {
+export function storybitsPanel(state: AppState, sbstate: StoryPanelState, dispatch: Dispatch, pprops: ExtraPanelProps): JSX.Element {
   const { data: { items } } = state;
 
   const leftRows: JSX.Element[] = [];
@@ -119,7 +122,7 @@ export function storybitsPanel(state: AppState, sbstate: StoryPanelState, dispat
       };
       leftRows.push(<tr style={yearStyle}><td colSpan={2}>{year}</td></tr>);
     }
-    leftRows.push(renderLeftItem(state, sbstate, item, dispatch));
+    leftRows.push(renderLeftItem(state, sbstate, item, dispatch, pprops));
     prevYear = year;
   }
   const leftContent = <table><tbody>{leftRows}</tbody></table>;
