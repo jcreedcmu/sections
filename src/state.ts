@@ -1,4 +1,4 @@
-import { AppProps } from "./app";
+import { AppProps, AugmentedServerData } from "./app";
 import { Effect } from "./effect";
 import { ServerData, ParsedItem } from "./notes-lib";
 import { StoryPanelState } from "./storybits-panel";
@@ -14,7 +14,7 @@ export type AppState = {
   counter: number,
   effects: Effect[],
   debugStr: string,
-  data: ServerData,
+  data: AugmentedServerData,
   navState: NavState,
 }
 

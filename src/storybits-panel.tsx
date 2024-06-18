@@ -22,11 +22,12 @@ function renderLikes(id: string, rating: number, dispatch: Dispatch) {
 }
 
 function renderItemId(state: AppState, id: string, dispatch: Dispatch): JSX.Element | undefined {
-  const item = state.data.items.find(item => item.meta?.id == id);
-  if (item == undefined) {
+  const ix = state.data.indexOfId[id];
+  if (ix == undefined) {
     console.error(`Couldn't find item with id {id}`);
     return undefined;
   }
+  const item = state.data.items[ix];
   return renderItem(state, item, dispatch);
 }
 

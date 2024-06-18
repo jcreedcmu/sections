@@ -13,8 +13,12 @@ import { queryTagPanel } from './query-tag-panel';
 import { Dispatch } from './action';
 import { collectedPanel } from './collected-panel';
 
+export type AugmentedServerData = ServerData & {
+  indexOfId: Record<string, number>,
+};
+
 export type AppProps = {
-  data: ServerData,
+  data: AugmentedServerData,
   hash: string,
 };
 
@@ -48,11 +52,25 @@ export function App(props: AppProps): JSX.Element {
   </>;
 }
 
+// XXX I may need to be careful about any runtime modifications to items
+// invalidating this
+function precomputeIndexOfId(items: ParsedItem[]): Record<string, number> {
+  const rv: Record<string, number> = {};
+  items.forEach((item, ix) => {
+    const id = item.meta?.id;
+    if (id != undefined) {
+      rv[id] = ix;
+    }
+  });
+  return rv;
+}
+
 export async function init() {
   const req = new Request('/json/data.json');
   const data: ServerData = await (await fetch(req)).json();
+  const indexOfId = precomputeIndexOfId(data.items);
   const props: AppProps = {
-    data,
+    data: { ...data, indexOfId },
     hash: window.location.hash,
   };
   const root = createRoot(document.querySelector('.app')!);
