@@ -6,6 +6,7 @@ import { canonicalize } from '../server/canonicalize';
 
 export const dataDir = path.join(__dirname, '../../../self');
 export const sidecarFile = path.join(dataDir, 'sidecar.json');
+export const collectedFile = path.join(dataDir, 'COLLECTED');
 
 export const ALL_NOTES_FILES: string[] = [
   'NOTES', 'IDEAS', 'IDEAS-2011-2016', 'CONWORLD', 'STORYMETA'
@@ -81,4 +82,8 @@ export function write_sidecar(sidecar: SidecarData): string {
 
 export function write_all_data(data: ServerData): string {
   return write_all_items(data.items) + write_sidecar(data.sidecar);
+}
+
+export function get_collected(): string {
+  return fs.readFileSync(collectedFile, 'utf8');
 }

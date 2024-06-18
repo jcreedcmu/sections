@@ -1,7 +1,7 @@
 import express from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
-import { NotesWriteError, dataDir, get_all_items, path_of_file, safe_to_overwrite, write_all_data, } from '../lib/notes-lib';
+import { NotesWriteError, dataDir, get_all_items, get_collected, path_of_file, safe_to_overwrite, write_all_data, } from '../lib/notes-lib';
 import { ServerData, SidecarData, item_of_parsed_item, notes_of_struct, parsed_item_of_item } from '../lib/notes-lib-pure';
 import { canonicalize } from './canonicalize';
 
@@ -37,9 +37,11 @@ app.post('/save', (req, res) => {
 app.use('/json/data.json', (req, res) => {
   const items = get_all_items().map(parsed_item_of_item);
   const sidecar: SidecarData = JSON.parse(fs.readFileSync(sidecarFile, 'utf8'));
+  const collected = get_collected();
   const data: ServerData = {
     items,
     sidecar,
+    collected,
   };
   res.json(data);
 });

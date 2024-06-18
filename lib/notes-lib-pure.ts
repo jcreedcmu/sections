@@ -10,6 +10,7 @@ export type SidecarData = {
 export type ServerData = {
   items: ParsedItem[],
   sidecar: SidecarData,
+  collected: string,
 }
 
 type Attrs = Record<string, string>;
@@ -169,4 +170,25 @@ export function item_of_parsed_item(pitem: ParsedItem): Item {
   };
   const raw_meta = meta == undefined ? undefined : unparseMeta(meta);
   return { attrs: new_attrs, body, date, file, meta: raw_meta };
+}
+
+
+// XXX: consider returning JSX.Element?
+export function render_collected(data: ServerData): string {
+  function applyTransclusions(line: string) {
+    return line.replace(/link:\[(.*?)\]\[(.*?)\]/g, (substring, idString) => {
+      const id = idString.replace(/.*\//, '');
+      const item = data.items.find(item => item.meta?.id == id);
+      if (item == undefined)
+        return `[id ${id} not found]`;
+      return item.body + '\n';
+    });
+  }
+  const raw = data.collected;
+  const lines = raw
+    .split('\n')
+    .map(x => x.replace(/#.*/, ''))
+    .filter(x => x.match(/\S/))
+    .map(applyTransclusions);
+  return lines.map(x => `${x}\n`).join('');
 }
