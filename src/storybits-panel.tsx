@@ -122,7 +122,7 @@ export function storybitsPanel(state: AppState, sbstate: StoryPanelState, dispat
         backgroundColor: '#ddd',
         cursor: 'default',
       };
-      leftRows.push(<tr style={yearStyle}><td colSpan={3}>{year}</td></tr>);
+      leftRows.push(<tr className="year-header" style={yearStyle}><td colSpan={3}>{year}</td></tr>);
     }
     leftRows.push(renderLeftItem(state, sbstate, item, dispatch, pprops));
     prevYear = year;

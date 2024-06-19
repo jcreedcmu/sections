@@ -99,7 +99,7 @@ h5 {  margin: 0px; }
 
 .likes-container svg {
   margin: 1px;
-cursor:  pointer;
+  cursor:  pointer;
 }
 
 .faded {
@@ -111,10 +111,16 @@ cursor:  pointer;
   overflow-x: hidden;
 }
 
+.year-header {
+  position: sticky;
+  top: 27px; /* this is kind of hacky but works */
+  z-index: 2000;
+}
+
 .table-header {
+  top: 0px;
   background-color: #333;
   color: white;
   position: sticky;
-  top: 0px;
   z-index: 2000;
 }
