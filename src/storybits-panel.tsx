@@ -100,7 +100,8 @@ function renderLeftItem(state: AppState, sbstate: StoryPanelState, item: ParsedI
   if (id != undefined && state.data.collectedIds.has(id)) {
     icons = '✔️';
   }
-  return <tr key={id} ref={ref} onMouseDown={e => rowOnMouseDown(id)} style={rowStyle}><td>{icons}</td><td>{effectiveTitle}</td></tr>;
+  const wordCount = item.body.split(/\s+/).filter(x => x.length).length;
+  return <tr key={id} ref={ref} onMouseDown={e => rowOnMouseDown(id)} style={rowStyle}><td>{icons}</td><td ><div className="left-title">{effectiveTitle}</div></td><td>{wordCount}</td></tr>;
 }
 
 export function storybitsPanel(state: AppState, sbstate: StoryPanelState, dispatch: Dispatch, pprops: ExtraPanelProps): JSX.Element {
@@ -121,12 +122,15 @@ export function storybitsPanel(state: AppState, sbstate: StoryPanelState, dispat
         backgroundColor: '#ddd',
         cursor: 'default',
       };
-      leftRows.push(<tr style={yearStyle}><td colSpan={2}>{year}</td></tr>);
+      leftRows.push(<tr style={yearStyle}><td colSpan={3}>{year}</td></tr>);
     }
     leftRows.push(renderLeftItem(state, sbstate, item, dispatch, pprops));
     prevYear = year;
   }
-  const leftContent = <table><tbody>{leftRows}</tbody></table>;
+  const leftContent = <table><thead className="table-header">
+    <tr><td></td><td>Title</td><td>Words</td></tr>
+  </thead>
+    <tbody>{leftRows}</tbody></table>;
   const rightContent = sbstate.currentItemId == undefined ? undefined : renderItemId(state, sbstate.currentItemId, dispatch);
 
   const containerStyle: React.CSSProperties = {
@@ -137,7 +141,6 @@ export function storybitsPanel(state: AppState, sbstate: StoryPanelState, dispat
   };
   const leftStyle: React.CSSProperties = {
     flexGrow: 0,
-    flexBasis: '250px',
     overflowY: 'scroll',
     overflowX: 'hidden',
     fontSize: '0.75em',

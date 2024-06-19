@@ -105,3 +105,16 @@ cursor:  pointer;
 .faded {
   opacity: 40%;
 }
+
+.left-title {
+  max-width: 250px;
+  overflow-x: hidden;
+}
+
+.table-header {
+  background-color: #333;
+  color: white;
+  position: sticky;
+  top: 0px;
+  z-index: 2000;
+}
