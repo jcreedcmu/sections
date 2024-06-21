@@ -1,3 +1,5 @@
+import { mapval } from "../src/lib/util";
+
 const NONCE_DATE = '0';
 
 // This is data that I don't want to save inline in my notesfiles, but
@@ -173,18 +175,38 @@ export function item_of_parsed_item(pitem: ParsedItem): Item {
 }
 
 
-export function get_collected_lines(collected: string): string[] {
-  return collected
+export function get_collected_lines(collected: string): Record<string, string[]> {
+  let key = '_none';
+  const rv: Record<string, string[]> = {};
+  const basic_lines = collected
     .split('\n')
     .map(x => x.replace(/#.*/, ''))
     .filter(x => x.match(/\S/));
+  for (const line of basic_lines) {
+    let m;
+    if (m = line.match(/^(\S*?\..*)/)) {
+      key = m[1];
+    }
+    else {
+      if (rv[key] == undefined)
+        rv[key] = [];
+      rv[key].push(line);
+    }
+  }
+  return rv;
 }
 
 export const linkRegexp = /link:\[(.*?)\/(.*?)\]\[(.*?)\]/g;
 
+export type ParsedCollected = {
+  fullText: string,
+  sectionText: { header: string, body: string }[],
+}
+
+
 // XXX: consider returning JSX.Element?
-export function render_collected(data: ServerData): string {
-  function applyTransclusions(line: string) {
+export function render_collected(data: ServerData): ParsedCollected {
+  function applyTransclusions(line: string): string {
     return line.replace(linkRegexp, (substring, file, id) => {
       const item = data.items.find(item => item.meta?.id == id);
       if (item == undefined)
@@ -192,7 +214,17 @@ export function render_collected(data: ServerData): string {
       return item.body + '\n';
     });
   }
-  const lines = get_collected_lines(data.collected)
-    .map(applyTransclusions);
-  return lines.map(x => `${x}\n`).join('');
+
+  const record = mapval(get_collected_lines(data.collected), lines => lines.map(applyTransclusions));
+  let fullText = '';
+  const sectionText: { header: string, body: string }[] = [];
+  for (const header of Object.keys(record)) {
+    let body = '';
+    fullText += `============== ${header}\n`;
+    const lines = record[header].map(x => `${x}\n`).join('');
+    fullText += lines;
+    body += lines;
+    sectionText.push({ header, body });
+  }
+  return { fullText, sectionText };
 }

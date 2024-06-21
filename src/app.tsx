@@ -74,14 +74,17 @@ function precomputeIndexOfId(items: ParsedItem[]): Record<string, number> {
 }
 
 function precomputeCollectedIds(collected: string): Set<string> {
-  const lines = get_collected_lines(collected);
+  const linesRec = get_collected_lines(collected);
   const rv = new Set<string>();
-  lines.forEach(line => {
-    for (const match of line.matchAll(linkRegexp)) {
-      const [substr, file, id, title] = match;
-      rv.add(id);
-    }
-  });
+  for (const key of Object.keys(linesRec)) {
+    const lines = linesRec[key];
+    lines.forEach(line => {
+      for (const match of line.matchAll(linkRegexp)) {
+        const [substr, file, id, title] = match;
+        rv.add(id);
+      }
+    });
+  }
   return rv;
 }
 
