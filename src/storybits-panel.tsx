@@ -6,6 +6,7 @@ import { Skull, Heart, SolidHeart } from './svg-graphics';
 import { ParsedItem } from './notes-lib';
 import { parseNotesDate } from './util';
 import { ExtraPanelProps, LeftItemRef } from './app';
+import { renderItemBody } from './render-item-body';
 
 export type StoryPanelState = {
   currentItemId: string | undefined,
@@ -53,7 +54,7 @@ function renderItem(state: AppState, item: ParsedItem, dispatch: Dispatch): JSX.
     <button onMouseDown={(e) => { dispatch({ t: 'scrollItemIntoView' }) }}>show</button><br />
     <span className="guid">{id}</span>
     {renderLikes(id, rating, dispatch)}<br />
-    {maybeTitle}{maybeAttrs}<br /><pre>{body}</pre>
+    {maybeTitle}{maybeAttrs}<br />{renderItemBody(body)}
   </div>;
   return rv;
 }
