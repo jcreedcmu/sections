@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Dispatch } from './action';
 
-function renderLink(target: string, text: string, dispatch: Dispatch): JSX.Element {
+export function renderLink(target: string, text: string, dispatch: Dispatch): JSX.Element {
   const m = target.match(/^([A-Z]*?)\/(.*)$/);
   if (m) {
-    return <a href='#'>{text}</a>;
+    return <a href={`#entry=${m[2]}`}>{text}</a >;
   }
   else {
     return <a target="_blank" href={target}>{text}</a>;

@@ -76,6 +76,7 @@ export function reduce(state: AppState, action: Action): AppState {
         });
         return produce(state, s => {
           s.navState = newNavState;
+          s.effects.push({ t: 'setHash', hash: hashOfNavState(newNavState) });
         });
       }
       else {
