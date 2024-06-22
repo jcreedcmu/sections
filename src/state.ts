@@ -25,12 +25,15 @@ export function navStateOfHash(hash: string): NavState {
   if (m = hash.match(/^#query-tag=(.*)$/)) {
     return { t: 'query-tag', tag: m[1] };
   }
+  if (m = hash.match(/^#entry=(.*)$/)) {
+    return { t: 'storybits', sbstate: { currentItemId: m[1] } };
+  }
   return { t: 'storybits', sbstate: { currentItemId: undefined } };
 }
 
 export function hashOfNavState(navState: NavState): string {
   switch (navState.t) {
-    case 'storybits': return '';
+    case 'storybits': return navState.sbstate.currentItemId == undefined ? '' : `#entry=${navState.sbstate.currentItemId}`;
     case 'tags': return '#tags';
     case 'collected': return '#collected';
     case 'query-tag': return `#query-tag=${navState.tag}`;
