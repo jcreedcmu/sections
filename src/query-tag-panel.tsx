@@ -13,7 +13,7 @@ export function queryTagPanel(state: AppState, tag: string, dispatch: Dispatch):
     // XXX This use of ix as key is bad --- I should be using id once I ensure every item has id
     return [<tr key={ix}><td>{file}<br />{date}<br />
       <span className="guid">{meta?.id ?? ''}</span></td>
-      <td>{renderTags(tags, dispatch)}</td><td>{renderItemBody(body)}</td></tr>];
+      <td>{renderTags(tags, dispatch)}</td><td>{renderItemBody(body, dispatch)}</td></tr>];
   });
   return <div className="panel"><table className="zebra"><tbody>{renderItems}</tbody></table></div>;
 }

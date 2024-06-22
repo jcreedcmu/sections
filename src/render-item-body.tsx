@@ -1,6 +1,7 @@
 import * as React from 'react';
+import { Dispatch } from './action';
 
-function renderLink(target: string, text: string): JSX.Element {
+function renderLink(target: string, text: string, dispatch: Dispatch): JSX.Element {
   const m = target.match(/^([A-Z]*?)\/(.*)$/);
   if (m) {
     return <a href='#'>{text}</a>;
@@ -10,7 +11,7 @@ function renderLink(target: string, text: string): JSX.Element {
   }
 }
 
-export function renderItemBody(body: string): JSX.Element {
+export function renderItemBody(body: string, dispatch: Dispatch): JSX.Element {
   const matches = Array.from(body.matchAll(/link:\[(.*?)\]\[(.*?)\]/g));
   let rv: (JSX.Element | string)[] = [];
   let lastIndex = 0;
@@ -18,7 +19,7 @@ export function renderItemBody(body: string): JSX.Element {
     if (match.index > lastIndex) {
       rv.push(body.substring(lastIndex, match.index));
     }
-    rv.push(renderLink(match[1], match[2]));
+    rv.push(renderLink(match[1], match[2], dispatch));
     lastIndex = match.index + match[0].length;
   }
   if (body.length > lastIndex) {

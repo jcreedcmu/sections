@@ -54,7 +54,7 @@ function renderItem(state: AppState, item: ParsedItem, dispatch: Dispatch): JSX.
     <button onMouseDown={(e) => { dispatch({ t: 'scrollItemIntoView' }) }}>show</button><br />
     <span className="guid">{id}</span>
     {renderLikes(id, rating, dispatch)}<br />
-    {maybeTitle}{maybeAttrs}<br />{renderItemBody(body)}
+    {maybeTitle}{maybeAttrs}<br />{renderItemBody(body, dispatch)}
   </div>;
   return rv;
 }
