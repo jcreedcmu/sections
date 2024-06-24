@@ -27,15 +27,40 @@ export function renderLink(target: string, text: string, dispatch: Dispatch): JS
   }
 }
 
+export type MarkupRole =
+  | 'link'
+  | 'attr'
+  ;
+
+function renderResult(role: MarkupRole, match: RegExpExecArray, dispatch: Dispatch): (JSX.Element | string)[] {
+  switch (role) {
+    case 'link': return [renderLink(match[1], match[2], dispatch)];
+    case 'attr': return [<div className="attr-chip">{match[1]}</div>];
+  }
+}
+
 export function renderItemBody(body: string, dispatch: Dispatch): JSX.Element {
-  const matches = Array.from(body.matchAll(/link:\[(.*?)\]\[(.*?)\]/g));
+  const matchers: { role: MarkupRole, regexp: RegExp }[] = [
+    { regexp: /link:\[(.*?)\]\[(.*?)\]/g, role: 'link' },
+    { regexp: /@([a-z]+):/g, role: 'attr' },
+  ];
+  const results = matchers.flatMap(matcher => Array.from(body.matchAll(matcher.regexp)).map(m => {
+    return {
+      role: matcher.role, match: m
+    };
+  }))
+    .sort((a, b) => a.match.index - b.match.index);
+
   let rv: (JSX.Element | string)[] = [];
   let lastIndex = 0;
-  for (const match of matches) {
+  for (const { role, match } of results) {
+    if (match.index < lastIndex) {
+      continue;
+    }
     if (match.index > lastIndex) {
       rv.push(body.substring(lastIndex, match.index));
     }
-    rv.push(renderLink(match[1], match[2], dispatch));
+    rv.push(...renderResult(role, match, dispatch));
     lastIndex = match.index + match[0].length;
   }
   if (body.length > lastIndex) {

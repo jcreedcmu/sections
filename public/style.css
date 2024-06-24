@@ -124,3 +124,16 @@ h5 {  margin: 0px; }
   position: sticky;
   z-index: 2000;
 }
+
+.attr-chip {
+  font-family: sans-serif;
+  font-size: 0.8em;
+  border: 1px solid #00a;
+  color: #004;
+  display: inline-block;
+  border-radius: 10px;
+  padding: 1px 5px;
+  margin: 1px 0px;
+  background-color: #7ce;
+  user-select: none;
+}
