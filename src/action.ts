@@ -17,6 +17,7 @@ export type Action =
   | { t: 'setRating', id: string, rating: number }
   | { t: 'setCurrentItem', id: string }
   | { t: 'scrollItemIntoView' }
+  | { t: 'keyDown', code: string }
   ;
 
 export type Dispatch = (action: Action) => void;

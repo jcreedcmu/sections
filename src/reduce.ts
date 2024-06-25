@@ -1,7 +1,38 @@
 import { produce } from 'immer';
-import { AppState, hashOfNavState } from './state';
+import { AppState, NavState, hashOfNavState } from './state';
 import { Action } from './action';
 import { Item, ParsedItem } from './notes-lib';
+
+function setNavState(state: AppState, navState: NavState) {
+  return produce(state, s => {
+    s.effects.push({ t: 'setHash', hash: hashOfNavState(navState) });
+    s.navState = navState;
+  });
+}
+
+function navigateItem(state: AppState, inc: number): AppState {
+  const ns = state.navState;
+  if (ns.t != 'storybits') return state;
+  const curItem = ns.sbstate.currentItemId;
+  if (curItem == undefined) return state;
+
+  const storybitsItems = state.data.items.filter(item => item.tags.includes('storybits') || item.file == "CONWORLD");
+  // XXX inefficient! should cache
+  const index = storybitsItems.findIndex(item => item.meta?.id == curItem);
+  if (index == -1) return state;
+
+  const newIndex = Math.max(0, Math.min(storybitsItems.length - 1, index + inc));
+
+  const newItem = storybitsItems[newIndex];
+  const meta = newItem.meta;
+  if (meta == undefined) {
+    return state;
+  }
+  const newNavState = produce(ns, s => {
+    s.sbstate.currentItemId = meta.id; // XXX assumes it has id
+  });
+  return setNavState(state, newNavState);
+}
 
 export function reduce(state: AppState, action: Action): AppState {
   switch (action.t) {
@@ -22,10 +53,7 @@ export function reduce(state: AppState, action: Action): AppState {
       });
     }
     case 'setNavState': {
-      return produce(state, s => {
-        s.effects.push({ t: 'setHash', hash: hashOfNavState(action.navState) });
-        s.navState = action.navState;
-      });
+      return setNavState(state, action.navState);
     }
     case 'giveGuid': {
       const oldMeta = state.data.items[action.itemIx].meta;
@@ -74,10 +102,7 @@ export function reduce(state: AppState, action: Action): AppState {
             currentItemId: action.id
           };
         });
-        return produce(state, s => {
-          s.navState = newNavState;
-          s.effects.push({ t: 'setHash', hash: hashOfNavState(newNavState) });
-        });
+        return setNavState(state, newNavState);
       }
       else {
         console.error(`setCurrentItem: incompatible navState`);
@@ -88,6 +113,11 @@ export function reduce(state: AppState, action: Action): AppState {
       return produce(state, s => {
         s.effects.push({ t: 'scrollItemIntoView' });
       });
+    }
+    case 'keyDown': {
+      if (action.code == 'ArrowUp') return navigateItem(state, -1);
+      if (action.code == 'ArrowDown') return navigateItem(state, 1);
+      return state;
     }
   }
 }

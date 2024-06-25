@@ -47,10 +47,16 @@ export function App(props: AppProps): JSX.Element {
   function onHashChange() {
     dispatch({ t: 'setNavState', navState: navStateOfHash(document.location.hash) });
   }
+  const onKeyDown = (e: KeyboardEvent) => {
+    dispatch({ t: 'keyDown', code: e.code });
+  };
+
   React.useEffect(() => {
     window.addEventListener('hashchange', onHashChange);
+    window.addEventListener('keydown', onKeyDown);
     return () => {
       window.removeEventListener('hashchange', onHashChange);
+      window.removeEventListener('keydown', onKeyDown);
     };
   });
   return <>
