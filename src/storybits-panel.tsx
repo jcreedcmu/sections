@@ -6,7 +6,7 @@ import { Skull, Heart, SolidHeart } from './svg-graphics';
 import { ParsedItem } from './notes-lib';
 import { parseNotesDate } from './util';
 import { ExtraPanelProps, LeftItemRef } from './app';
-import { renderItemBody } from './render-item-body';
+import { renderAttrChip, renderItemBody, renderMarkup } from './render-item-body';
 
 export type StoryPanelState = {
   currentItemId: string | undefined,
@@ -33,6 +33,13 @@ function renderItemId(state: AppState, id: string, dispatch: Dispatch): JSX.Elem
   return renderItem(state, item, dispatch);
 }
 
+function renderAttrs(attrs: Record<string, string>, dispatch: Dispatch): JSX.Element {
+  const attrLines = Object.keys(attrs).sort().map(k => {
+    return <>{renderAttrChip(k)}: {renderMarkup(attrs[k], dispatch)}<br /></>;
+  });
+  return <div>{attrLines}</div>;
+}
+
 function renderItem(state: AppState, item: ParsedItem, dispatch: Dispatch): JSX.Element {
 
   const { tags, attrs, body, date, file, meta } = item;
@@ -46,7 +53,7 @@ function renderItem(state: AppState, item: ParsedItem, dispatch: Dispatch): JSX.
 
   const maybeTitle = attrs.title != undefined ? <h2>{attrs.title}</h2> : undefined;
   const { title: _, ...otherAttrs } = attrs;
-  const maybeAttrs = Object.keys(otherAttrs).length > 0 ? 'otherAttrs=' + JSON.stringify(otherAttrs) : undefined;
+  const maybeAttrs = Object.keys(otherAttrs).length > 0 ? renderAttrs(otherAttrs, dispatch) : undefined;
   const rating = state.data.sidecar.rating[id] ?? 0;
   const entryClassName = rating < 0 ? 'faded' : undefined;
   const rv = <div>
