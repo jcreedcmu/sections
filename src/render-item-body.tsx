@@ -31,15 +31,22 @@ export function renderAttrChip(text: string): JSX.Element {
   return <div className="attr-chip">{text}</div>;
 }
 
+export function renderImage(path: string): JSX.Element {
+  const stripped = path.replace(/^\//, '');
+  return <img src={`/image/${stripped}`} />;
+}
+
 export type MarkupRole =
   | 'link'
   | 'attr'
+  | 'image'
   ;
 
 function renderResult(role: MarkupRole, match: RegExpExecArray, dispatch: Dispatch): (JSX.Element | string)[] {
   switch (role) {
     case 'link': return [renderLink(match[1], match[2], dispatch)];
     case 'attr': return [renderAttrChip(match[1])];
+    case 'image': return [renderImage(match[1])];
   }
 }
 
@@ -47,6 +54,7 @@ export function renderMarkup(raw: string, dispatch: Dispatch): JSX.Element {
   const matchers: { role: MarkupRole, regexp: RegExp }[] = [
     { regexp: /link:\[(.*?)\]\[(.*?)\]/g, role: 'link' },
     { regexp: /@([a-z]+):/g, role: 'attr' },
+    { regexp: /image:\[(.*?)\]/g, role: 'image' },
   ];
   const results = matchers.flatMap(matcher => Array.from(raw.matchAll(matcher.regexp)).map(m => {
     return {

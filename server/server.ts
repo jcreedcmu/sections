@@ -8,6 +8,20 @@ import { canonicalize } from './canonicalize';
 const app = express();
 const sidecarFile = path.join(dataDir, 'sidecar.json'); // XXX import from lib
 
+app.use('/image', (req, res) => {
+
+  const path = req.path.toString();
+  const allowed = path.match(new RegExp('^/home/jcreed/art')) ||
+    path.match(new RegExp('^/home/jcreed/self/whiteboard'));
+  if (allowed) {
+    res.end(fs.readFileSync(path));
+  }
+  else {
+    res.status(404);
+    res.end('not found');
+  }
+});
+
 // Expects BODY to by JSON-encoded ServerData
 app.post('/save', (req, res) => {
   let data = '';
