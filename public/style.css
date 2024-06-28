@@ -137,3 +137,8 @@ h5 {  margin: 0px; }
   background-color: #7ce;
   user-select: none;
 }
+
+.marker {
+  font-size: 1.5em;
+  color: #33f;
+}

@@ -36,10 +36,15 @@ export function renderImage(path: string): JSX.Element {
   return <img src={`/image/${stripped}`} />;
 }
 
+export function renderMarker(id: string): JSX.Element | string {
+  return <a id={id} className="marker">{"\u25a0"}</a>;
+}
+
 export type MarkupRole =
   | 'link'
   | 'attr'
   | 'image'
+  | 'marker'
   ;
 
 function renderResult(role: MarkupRole, match: RegExpExecArray, dispatch: Dispatch): (JSX.Element | string)[] {
@@ -47,6 +52,7 @@ function renderResult(role: MarkupRole, match: RegExpExecArray, dispatch: Dispat
     case 'link': return [renderLink(match[1], match[2], dispatch)];
     case 'attr': return [renderAttrChip(match[1])];
     case 'image': return [renderImage(match[1])];
+    case 'marker': return [renderMarker(match[1])];
   }
 }
 
@@ -55,6 +61,7 @@ export function renderMarkup(raw: string, dispatch: Dispatch): JSX.Element {
     { regexp: /link:\[(.*?)\]\[(.*?)\]/g, role: 'link' },
     { regexp: /@([a-z]+):/g, role: 'attr' },
     { regexp: /image:\[(.*?)\]/g, role: 'image' },
+    { regexp: /marker:\[:id ([-a-f0-9]+)\]/g, role: 'marker' },
   ];
   const results = matchers.flatMap(matcher => Array.from(raw.matchAll(matcher.regexp)).map(m => {
     return {
